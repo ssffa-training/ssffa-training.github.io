@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>SSFFA Training Portal</title>
+<meta name="description" content="Trainings, certificates and check-in for SSFFA agents.">
+<meta name="theme-color" content="#27449C">
+<meta property="og:title" content="SSFFA Training Portal">
+<meta property="og:description" content="Trainings, certificates and check-in for SSFFA agents.">
+<meta property="og:image" content="https://antipas2022.github.io/ssffa-training/icon-512.png">
+<meta property="og:url" content="https://antipas2022.github.io/ssffa-training/">
+<meta property="og:type" content="website">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/png" sizes="48x48" href="favicon-48.png">
+<link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="SSFFA Training">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<style>
+html,body{margin:0;height:100%;background:#27449C;font-family:Arial,Helvetica,sans-serif}
+#app{position:fixed;inset:0;width:100%;height:100%;border:0;background:#F3F5FB}
+#splash{position:fixed;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;background:#27449C;color:#fff;transition:opacity .3s}
+#splash img{width:110px;height:110px;border-radius:50%;background:#fff}
+#splash b{font-size:20px;letter-spacing:.04em}
+#splash span{font-size:13px;opacity:.85}
+#home{position:fixed;right:14px;bottom:calc(14px + env(safe-area-inset-bottom));width:48px;height:48px;border-radius:50%;border:0;background:#27449C;color:#fff;box-shadow:0 4px 14px rgba(0,0,0,.25);display:grid;place-items:center;cursor:pointer;opacity:.92}
+#home svg{width:24px;height:24px;stroke:#fff;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+#tip{position:fixed;left:12px;right:12px;bottom:calc(74px + env(safe-area-inset-bottom));background:#fff;color:#141C45;border-radius:10px;padding:12px 14px;box-shadow:0 6px 24px rgba(0,0,0,.25);font-size:14px;line-height:1.45;display:none}
+#tip button{font:inherit;font-weight:bold;border:0;border-radius:6px;padding:8px 12px;margin-top:8px;cursor:pointer}
+#tip .go{background:#27449C;color:#fff}
+#tip .no{background:#E6EBFA;color:#27449C;margin-left:6px}
+</style>
+</head>
+<body>
+<div id="splash"><img src="icon-192.png" alt="SSFFA logo"><b>SSFFA TRAINING PORTAL</b><span>Loading...</span></div>
+<iframe id="app" title="SSFFA Training Portal" allow="clipboard-write"></iframe>
+<button id="home" aria-label="Back to portal home"><svg viewBox="0 0 24 24"><path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/></svg></button>
+<div id="tip"><div id="tipText"></div><button class="go" id="tipGo">Install app</button><button class="no" id="tipNo">Not now</button></div>
+<script>
+var BASE='https://script.google.com/macros/s/AKfycbysZAelhennYh_YA_R9ITLAL6nGMrHxy21p0bp33ZEp4-gEe3aurG8ggNzjOLJo6qrPRw/exec';
+var app=document.getElementById('app'),splash=document.getElementById('splash');
+var page=(location.search.match(/[?&]page=([a-z]+)/)||[])[1]||'home';
+function load(p){app.src=BASE+'?page='+p+'&embed=1';}
+app.onload=function(){splash.style.opacity=0;setTimeout(function(){splash.style.display='none';},300);};
+setTimeout(function(){if(splash.style.display!=='none'){splash.querySelector('span').innerHTML='Slow connection? <a style="color:#fff" href="'+BASE+'?page='+page+'">Open the portal directly</a>';}},12000);
+document.getElementById('home').onclick=function(){splash.style.display='flex';splash.style.opacity=1;load('home');};
+load(page);
+window.addEventListener('message',function(e){if(!/googleusercontent\.com$|script\.google\.com$/.test(new URL(e.origin).hostname))return;var p=e.data&&e.data.ssffa;if(typeof p==='string'&&/^[a-z]+$/.test(p)){splash.style.display='flex';splash.style.opacity=1;load(p);}});
+if('serviceWorker' in navigator){navigator.serviceWorker.register('sw.js').catch(function(){});}
+var standalone=window.matchMedia('(display-mode: standalone)').matches||navigator.standalone;
+var dismissed=false;try{dismissed=localStorage.getItem('ssffaTipNo')==='1';}catch(e){}
+var tip=document.getElementById('tip'),deferred=null;
+function no(){tip.style.display='none';try{localStorage.setItem('ssffaTipNo','1');}catch(e){}}
+document.getElementById('tipNo').onclick=no;
+window.addEventListener('beforeinstallprompt',function(e){e.preventDefault();deferred=e;if(standalone||dismissed)return;document.getElementById('tipText').textContent='Install the SSFFA Training Portal on this phone for one-tap access.';tip.style.display='block';});
+document.getElementById('tipGo').onclick=function(){if(deferred){deferred.prompt();deferred.userChoice.then(function(){tip.style.display='none';});}else{no();}};
+if(!standalone&&!dismissed&&/iphone|ipad/i.test(navigator.userAgent)){document.getElementById('tipText').innerHTML='To install on iPhone: tap the <b>Share</b> button, then <b>Add to Home Screen</b>.';document.getElementById('tipGo').style.display='none';document.getElementById('tipNo').textContent='Got it';tip.style.display='block';}
+</script>
+</body>
+</html>
