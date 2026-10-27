@@ -18,17 +18,17 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="SSFFA Training">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
 <style>
 html,body{margin:0;height:100%;background:#27449C;font-family:Arial,Helvetica,sans-serif}
-#app{position:fixed;inset:0;width:100%;height:100%;border:0;background:#F3F5FB}
+#app{position:fixed;top:env(safe-area-inset-top,0px);left:0;right:0;bottom:0;width:100%;height:calc(100% - env(safe-area-inset-top,0px));border:0;background:#F3F5FB}
 #splash{position:fixed;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;background:#27449C;color:#fff;transition:opacity .3s}
 #splash img{width:110px;height:110px;border-radius:50%;background:#fff}
 #splash b{font-size:20px;letter-spacing:.04em}
 #splash span{font-size:13px;opacity:.85}
 #home{position:fixed;right:14px;bottom:calc(14px + env(safe-area-inset-bottom));width:48px;height:48px;border-radius:50%;border:0;background:#27449C;color:#fff;box-shadow:0 4px 14px rgba(0,0,0,.25);display:grid;place-items:center;cursor:pointer;opacity:.92}
 #home svg{width:24px;height:24px;stroke:#fff;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
-#bar{position:fixed;top:0;left:0;right:0;height:3px;z-index:20;overflow:hidden;display:none;background:rgba(237,28,36,.18)}
+#bar{position:fixed;top:env(safe-area-inset-top,0px);left:0;right:0;height:3px;z-index:20;overflow:hidden;display:none;background:rgba(237,28,36,.18)}
 #bar i{position:absolute;top:0;bottom:0;left:-40%;width:40%;background:#ED1C24;animation:slide 1s ease-in-out infinite}
 @keyframes slide{0%{left:-40%}100%{left:100%}}
 #tip{position:fixed;left:12px;right:12px;bottom:calc(74px + env(safe-area-inset-bottom));background:#fff;color:#141C45;border-radius:10px;padding:12px 14px;box-shadow:0 6px 24px rgba(0,0,0,.25);font-size:14px;line-height:1.45;display:none}
