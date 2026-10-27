@@ -28,6 +28,9 @@ html,body{margin:0;height:100%;background:#27449C;font-family:Arial,Helvetica,sa
 #splash span{font-size:13px;opacity:.85}
 #home{position:fixed;right:14px;bottom:calc(14px + env(safe-area-inset-bottom));width:48px;height:48px;border-radius:50%;border:0;background:#27449C;color:#fff;box-shadow:0 4px 14px rgba(0,0,0,.25);display:grid;place-items:center;cursor:pointer;opacity:.92}
 #home svg{width:24px;height:24px;stroke:#fff;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+#bar{position:fixed;top:0;left:0;right:0;height:3px;z-index:20;overflow:hidden;display:none;background:rgba(237,28,36,.18)}
+#bar i{position:absolute;top:0;bottom:0;left:-40%;width:40%;background:#ED1C24;animation:slide 1s ease-in-out infinite}
+@keyframes slide{0%{left:-40%}100%{left:100%}}
 #tip{position:fixed;left:12px;right:12px;bottom:calc(74px + env(safe-area-inset-bottom));background:#fff;color:#141C45;border-radius:10px;padding:12px 14px;box-shadow:0 6px 24px rgba(0,0,0,.25);font-size:14px;line-height:1.45;display:none}
 #tip button{font:inherit;font-weight:bold;border:0;border-radius:6px;padding:8px 12px;margin-top:8px;cursor:pointer}
 #tip .go{background:#27449C;color:#fff}
@@ -35,6 +38,7 @@ html,body{margin:0;height:100%;background:#27449C;font-family:Arial,Helvetica,sa
 </style>
 </head>
 <body>
+<div id="bar"><i></i></div>
 <div id="splash"><img src="icon-192.png" alt="SSFFA logo"><b>SSFFA TRAINING PORTAL</b><span>Loading...</span></div>
 <iframe id="app" title="SSFFA Training Portal" allow="clipboard-write"></iframe>
 <button id="home" aria-label="Back to portal home"><svg viewBox="0 0 24 24"><path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/></svg></button>
@@ -43,12 +47,13 @@ html,body{margin:0;height:100%;background:#27449C;font-family:Arial,Helvetica,sa
 var BASE='https://script.google.com/macros/s/AKfycbysZAelhennYh_YA_R9ITLAL6nGMrHxy21p0bp33ZEp4-gEe3aurG8ggNzjOLJo6qrPRw/exec';
 var app=document.getElementById('app'),splash=document.getElementById('splash');
 var page=(location.search.match(/[?&]page=([a-z]+)/)||[])[1]||'home';
-function load(p){app.src=BASE+'?page='+p+'&embed=1';}
-app.onload=function(){splash.style.opacity=0;setTimeout(function(){splash.style.display='none';},300);};
+var bar=document.getElementById('bar'),first=true;
+function load(p){bar.style.display='block';app.src=BASE+'?page='+p+'&embed=1';}
+app.onload=function(){bar.style.display='none';first=false;splash.style.opacity=0;setTimeout(function(){splash.style.display='none';},300);};
 setTimeout(function(){if(splash.style.display!=='none'){splash.querySelector('span').innerHTML='Slow connection? <a style="color:#fff" href="'+BASE+'?page='+page+'">Open the portal directly</a>';}},12000);
-document.getElementById('home').onclick=function(){splash.style.display='flex';splash.style.opacity=1;load('home');};
+document.getElementById('home').onclick=function(){load('home');};
 load(page);
-window.addEventListener('message',function(e){if(!/googleusercontent\.com$|script\.google\.com$/.test(new URL(e.origin).hostname))return;var p=e.data&&e.data.ssffa;if(typeof p==='string'&&/^[a-z]+$/.test(p)){splash.style.display='flex';splash.style.opacity=1;load(p);}});
+window.addEventListener('message',function(e){if(!/googleusercontent\.com$|script\.google\.com$/.test(new URL(e.origin).hostname))return;if(e.data&&(e.data.ssffaBusyReady||typeof e.data.ssffaBusy==='number')){(window.__busy=window.__busy||[]).push(JSON.stringify(e.data));return;}var p=e.data&&e.data.ssffa;if(typeof p==='string'&&/^[a-z]+$/.test(p)){load(p);}});
 if('serviceWorker' in navigator){navigator.serviceWorker.register('sw.js').catch(function(){});}
 var standalone=window.matchMedia('(display-mode: standalone)').matches||navigator.standalone;
 var dismissed=false;try{dismissed=localStorage.getItem('ssffaTipNo')==='1';}catch(e){}
