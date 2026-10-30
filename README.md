@@ -1,7 +1,5 @@
-# SSFFA Training Portal
+# Moved
 
-App launcher for the South Sudan Freight Forwarders Association training system.
+The SSFFA Training Management System now lives at https://ssffa-training.github.io/ (repository `ssffa-training/ssffa-training.github.io`).
 
-Install link: https://ssffa-training.github.io/
-
-This repository holds only the app icon and launcher page. All training data stays in the SSFFA system.
+Every page here forwards to the same page at the new address, keeping any link details such as `?no=` on certificate checks.
