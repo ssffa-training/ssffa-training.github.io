@@ -3,10 +3,10 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>SSFFA Training Portal</title>
+<title>SSFFA Training Management System</title>
 <meta name="description" content="Trainings, certificates and check-in for SSFFA agents.">
 <meta name="theme-color" content="#27449C">
-<meta property="og:title" content="SSFFA Training Portal">
+<meta property="og:title" content="SSFFA Training Management System">
 <meta property="og:description" content="Trainings, certificates and check-in for SSFFA agents.">
 <meta property="og:image" content="https://ssffa-training.github.io/icon-512.png">
 <meta property="og:url" content="https://ssffa-training.github.io/">
@@ -39,8 +39,8 @@ html,body{margin:0;height:100%;background:#27449C;font-family:Arial,Helvetica,sa
 </head>
 <body>
 <div id="bar"><i></i></div>
-<div id="splash"><img src="icon-192.png" alt="SSFFA logo"><b>SSFFA TRAINING PORTAL</b><span>Loading...</span></div>
-<iframe id="app" title="SSFFA Training Portal" allow="clipboard-write"></iframe>
+<div id="splash"><img src="icon-192.png" alt="SSFFA logo"><b>SSFFA TRAINING</b><span style="opacity:.85;font-size:13px;margin-top:-8px">Management System</span><span>Loading...</span></div>
+<iframe id="app" title="SSFFA Training Management System" allow="clipboard-write"></iframe>
 <button id="home" aria-label="Back to portal home"><svg viewBox="0 0 24 24"><path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/></svg></button>
 <div id="tip"><div id="tipText"></div><button class="go" id="tipGo">Install app</button><button class="no" id="tipNo">Not now</button></div>
 <script>
@@ -49,19 +49,19 @@ var app=document.getElementById('app'),splash=document.getElementById('splash');
 var page=(location.search.match(/[?&]page=([a-z]+)/)||[])[1]||'home';
 var bar=document.getElementById('bar'),first=true;
 var EXTRA=location.search.replace(/^\?/,'').split('&').filter(function(kv){return kv&&!/^page=/.test(kv);}).join('&');
-function load(p,keep){bar.style.display='block';app.src=BASE+'?page='+p+'&embed=1'+(keep&&EXTRA?'&'+EXTRA:'');}
+function load(p,keep,qs){bar.style.display='block';var x=keep?EXTRA:(qs||'');app.src=BASE+'?page='+p+'&embed=1'+(x?'&'+x:'');}
 app.onload=function(){bar.style.display='none';first=false;splash.style.opacity=0;setTimeout(function(){splash.style.display='none';},300);};
-setTimeout(function(){if(splash.style.display!=='none'){splash.querySelector('span').innerHTML='Slow connection? <a style="color:#fff" href="'+BASE+'?page='+page+'">Open the portal directly</a>';}},12000);
+setTimeout(function(){if(splash.style.display!=='none'){splash.querySelector('span:last-of-type').innerHTML='Slow connection. <a style="color:#fff" href="#" onclick="location.reload();return false">Tap to try again</a>';}},12000);
 document.getElementById('home').onclick=function(){load('home');};
 load(page,true);
-window.addEventListener('message',function(e){if(!/googleusercontent\.com$|script\.google\.com$/.test(new URL(e.origin).hostname))return;if(e.data&&(e.data.ssffaBusyReady||typeof e.data.ssffaBusy==='number')){(window.__busy=window.__busy||[]).push(JSON.stringify(e.data));return;}var p=e.data&&e.data.ssffa;if(typeof p==='string'&&/^[a-z]+$/.test(p)){load(p);}});
+window.addEventListener('message',function(e){if(!/googleusercontent\.com$|script\.google\.com$/.test(new URL(e.origin).hostname))return;if(e.data&&(e.data.ssffaBusyReady||typeof e.data.ssffaBusy==='number')){(window.__busy=window.__busy||[]).push(JSON.stringify(e.data));return;}var p=e.data&&e.data.ssffa;if(typeof p==='string'&&/^[a-z]+$/.test(p)){var qs=e.data.qs;load(p,false,typeof qs==='string'&&/^[A-Za-z0-9_.%=&+-]*$/.test(qs)?qs:'');}});
 if('serviceWorker' in navigator){navigator.serviceWorker.register('sw.js').catch(function(){});}
 var standalone=window.matchMedia('(display-mode: standalone)').matches||navigator.standalone;
 var dismissed=false;try{dismissed=localStorage.getItem('ssffaTipNo')==='1';}catch(e){}
 var tip=document.getElementById('tip'),deferred=null;
 function no(){tip.style.display='none';try{localStorage.setItem('ssffaTipNo','1');}catch(e){}}
 document.getElementById('tipNo').onclick=no;
-window.addEventListener('beforeinstallprompt',function(e){e.preventDefault();deferred=e;if(standalone||dismissed)return;document.getElementById('tipText').textContent='Install the SSFFA Training Portal on this phone for one-tap access.';tip.style.display='block';});
+window.addEventListener('beforeinstallprompt',function(e){e.preventDefault();deferred=e;if(standalone||dismissed)return;document.getElementById('tipText').textContent='Install the SSFFA Training Management System on this phone for one-tap access.';tip.style.display='block';});
 document.getElementById('tipGo').onclick=function(){if(deferred){deferred.prompt();deferred.userChoice.then(function(){tip.style.display='none';});}else{no();}};
 if(!standalone&&!dismissed&&/iphone|ipad/i.test(navigator.userAgent)){document.getElementById('tipText').innerHTML='To install on iPhone: tap the <b>Share</b> button, then <b>Add to Home Screen</b>.';document.getElementById('tipGo').style.display='none';document.getElementById('tipNo').textContent='Got it';tip.style.display='block';}
 </script>
